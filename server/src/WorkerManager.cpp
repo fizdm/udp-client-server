@@ -14,6 +14,7 @@ WorkerManager::WorkerManager(uint16_t nWorkers) {
 
 WorkerManager::~WorkerManager() {
     isRunning_.store(false, std::memory_order_relaxed);
+    queueCondVar_.notify_all();
 
     for (auto& thread : workers_) {
         if (thread.joinable()) {
@@ -25,11 +26,13 @@ WorkerManager::~WorkerManager() {
 void WorkerManager::run() {
     std::unique_lock lock(queueMutex_);
     queueCondVar_.wait(lock, [&]() {
-        return !tasks_.empty();
+        return !tasks_.empty() || !isRunning_.load(std::memory_order_relaxed);
     });
 
-    auto task = tasks_.front();
-    tasks_.pop();
+    if (!tasks_.empty()) {
+        auto task = tasks_.front();
+        tasks_.pop();
 
-    task();
+        task();
+    }
 }
