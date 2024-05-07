@@ -4,11 +4,12 @@
 #include <cstdint>
 #include <netinet/in.h>
 #include <csignal>
+#include <stdexcept>
 
 class UDPSocket
 {
 public:
-    explicit UDPSocket(uint16_t port)
+    explicit UDPSocket()
     {
         fd_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
         if (fd_ < 0)

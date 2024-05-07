@@ -20,7 +20,7 @@ public:
 
 private:
     WorkerManager workerManager_;
-    std::unique_ptr<UDPSocket> socket_{nullptr};
+    UDPSocket socket_;
     std::atomic<bool> isRunning_{false};
 
     void run();

@@ -11,5 +11,4 @@ set(SERVER_SRC
 )
 
 add_executable(${SERVER_NAME} ${SERVER_SRC})
-target_link_libraries(${SERVER_NAME} PRIVATE uring)
 

@@ -8,7 +8,7 @@ struct SocketMessage
 {
     int socket;
     sockaddr_in clientAddr;
-    socklen_t clientLen;
+    socklen_t clientLen{sizeof(clientAddr)};
     std::string msg;
 };
 
