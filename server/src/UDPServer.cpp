@@ -7,6 +7,7 @@
 
 UDPServer::UDPServer(uint16_t port) :
     socket_{std::make_unique<UDPSocket>(port)} {
+    setup(port);
 }
 
 void UDPServer::Start() {
@@ -29,14 +30,13 @@ void UDPServer::run() {
         // TODO: make non blocking
         ssize_t recvLen{0};
         if (recvLen = recvfrom(socket_->GetFd(), tempBuf, sizeof(tempBuf), 0,
-                                       reinterpret_cast<sockaddr*>(&socketMessage.clientAddr),
-                                       &socketMessage.clientLen);
+                               reinterpret_cast<sockaddr*>(&socketMessage.clientAddr),
+                               &socketMessage.clientLen);
             recvLen <= 0) {
             continue;
         }
 
-        if (recvLen == 1 && tempBuf[0] == '\n')
-        {
+        if (recvLen == 1 && tempBuf[0] == '\n') {
             continue;
         }
 
@@ -55,8 +55,21 @@ void UDPServer::run() {
 
             printf("Received packet from %s:%d\n", inet_ntoa(internalMessage.clientAddr.sin_addr), ntohs(internalMessage.clientAddr.sin_port));
             ssize_t res = sendto(internalMessage.socket, internalMessage.msg.c_str(), internalMessage.msg.size(), 0,
-                   reinterpret_cast<sockaddr*>(&internalMessage.clientAddr),
-                   internalMessage.clientLen);
+                                 reinterpret_cast<sockaddr*>(&internalMessage.clientAddr),
+                                 internalMessage.clientLen);
         });
+    }
+}
+
+void UDPServer::setup(uint16_t port) {
+    sockaddr_in local{
+        .sin_family = AF_INET,
+        .sin_port = htons(port),
+        .sin_addr = {htonl(INADDR_ANY)},
+    };
+
+    if (bind(socket_->GetFd(), reinterpret_cast<sockaddr*>(&local), sizeof(local)) != 0) {
+        socket_ = nullptr;
+        throw std::runtime_error("Unable to bind socket");
     }
 }

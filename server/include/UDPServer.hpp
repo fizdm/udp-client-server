@@ -24,6 +24,7 @@ private:
     std::atomic<bool> isRunning_{false};
 
     void run();
+    void setup(uint16_t port);
 };
 
 #endif //UDPSERVER_HPP

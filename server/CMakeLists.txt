@@ -7,7 +7,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data DESTINATION ${CMAKE_CURRENT_BINARY_DI
 set(SERVER_SRC
         src/WorkerManager.cpp
         src/UDPServer.cpp
-        src/UringController.cpp
         src/main.cpp
 )
 
